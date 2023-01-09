@@ -11,7 +11,7 @@ void wait(void);
 
 void print_unitsArray(unitsArray nb_unite); //print the unitsArray
 
-void move(board, unitsArray, int unitId, int x, int y);
+void move(board, int player, unitsArray, int unitId, int x, int y);
 
 void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId);
 

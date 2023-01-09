@@ -1,4 +1,4 @@
-/**
+/*
  * ----------------------------------------------
  *                 Game_Engine.c
  * ----------------------------------------------
@@ -38,7 +38,7 @@ int action(int player,board plateau,unitsArray nb_unite)
             scanf("%d",&avanc);
             printf("Quelle sont les coordonnées de la case ciblée(libre) ?");
             scanf("%d %d",&x,&y);
-            move(plateau,nb_unite,avanc,x,y);
+            move(plateau,player,nb_unite,avanc,x,y);
             turn++;
             break;
         case 2:
@@ -101,10 +101,10 @@ int main(int argc, char const *argv[])
     unitsArray nb_unite = malloc(sizeof(struct unitsArray_s));
     initGame(plateau,nb_unite);
     print_unitsArray(nb_unite);
+    //printBoard(plateau);
+    //convert(plateau,nb_unite,13,4,);
     printBoard(plateau);
-    move(plateau,nb_unite,2,6,4);
-    printBoard(plateau);
-    print_unitsArray(nb_unite);
+    //print_unitsArray(nb_unite);
     /*while(fin)
     {
         action(0,plateau,nb_unite);

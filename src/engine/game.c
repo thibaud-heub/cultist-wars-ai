@@ -7,8 +7,8 @@
 
 void initGame(board plateau, unitsArray nb_unite)
 {
-    int compt=0,n,x,False=1,a,b;
-    //Initialisation du board
+    int compt=0,n,x,False=1,a,b,t,attention = 0;
+    //Initialisation du board et des obstacles
     for(int i=0;i<HEIGHT;i++)
     {
         for(int j=0;j<WIDTH;j++)
@@ -54,9 +54,9 @@ void initGame(board plateau, unitsArray nb_unite)
         {
             nb_unite->units[i].owner=2;
             //nb_unite->units[i].unit_type=0;
-            if(i>= MAX_UNITS/2)
+            if(i>= MAX_UNITS/2-1)
             {
-                nb_unite->units[i]=nb_unite->units[i-MAX_UNITS/2];
+                nb_unite->units[i]=nb_unite->units[i-(MAX_UNITS/2-1)];
 		        nb_unite->units[i].unitId=i;
                 nb_unite->units[i].y=12-nb_unite->units[i].y;
                 //plateau[nb_unite->units[i].x][nb_unite->units[i].y]='u';
@@ -67,13 +67,21 @@ void initGame(board plateau, unitsArray nb_unite)
                 {
                     a=rand() % 7 ;
                     b=1 + rand() % 5;
-                    if(plateau[a][b] == '0') 
+                    for(t=0;t<=i;t++)
+                    {
+                        if(nb_unite->units[t].x == a && nb_unite->units[t].y == b && attention == 0 && plateau[a][b] == 'X')
+                        {
+                            attention = 1;//attention : permet de dire si il y a une unité déja présente
+                        }
+                    }
+                    if(attention == 0) 
                     {
                         nb_unite->units[i].x=a;
                         nb_unite->units[i].y=b;
                         //plateau[a][b]='u'; //commande qui permet de savoir ou sont les unités
                         False = 0;
                     } 
+                    attention = 0;
                 }
             False = 1;
             } 
@@ -199,11 +207,11 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
         }
     }   
 }
-void move(board plateau, unitsArray nb_unite, int uniteId, int x, int y)
+void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, int y)
 {
     int x1 = nb_unite->units[uniteId].x,y1 = nb_unite->units[uniteId].y;
     int i,end=0;
-    if(abs(x1-x)<=1 && abs(y1-y)<=1 && !(abs(x1-x)==abs(y1-y)) && plateau[x][y] == '0')
+    if(abs(x1-x)<=1 && abs(y1-y)<=1 && !(abs(x1-x)==abs(y1-y)) && plateau[x][y] == '0' && nb_unite->units[uniteId].owner == player)
     {
         for(i=0;i<=MAX_UNITS;i++)
         {
@@ -218,9 +226,9 @@ void move(board plateau, unitsArray nb_unite, int uniteId, int x, int y)
         }
         else
         {
-            plateau[x1][y1]='0';
+            /*plateau[x1][y1]='0';
             if(uniteId >=12) plateau[x][y]='1';
-            else plateau[x][y]='u';
+            else plateau[x][y]='u';*/
             nb_unite->units[uniteId].x = x;
             nb_unite->units[uniteId].y = y;
         }
@@ -232,9 +240,9 @@ void move(board plateau, unitsArray nb_unite, int uniteId, int x, int y)
 }
 void convert(board plateau, unitsArray nb_unite, int unitId, int targetId)
 {
-    assert(nb_unite->units[targetId].owner!=nb_unite->units[unitId].owner);
+
     int x=nb_unite->units[unitId].x,y=nb_unite->units[unitId].y,x1=nb_unite->units[targetId].x,y1=nb_unite->units[targetId].y;
-    if(abs(x1-x)<=1 && abs(y1-y)<=1 && !(abs(x1-x)==abs(y1-y)) && nb_unite->units[targetId].owner!=nb_unite->units[unitId].owner)
+    if(abs(x1-x)<=1 && abs(y1-y)<=1 && !(abs(x1-x)==abs(y1-y)) && nb_unite->units[targetId].owner != nb_unite->units[unitId].owner)
     {
         if(nb_unite->units[unitId].owner == 0) 
         {
