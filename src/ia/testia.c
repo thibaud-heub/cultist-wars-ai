@@ -5,22 +5,23 @@
 unitsArray init_units(){
     unitsArray nb_unite=malloc(sizeof(struct unitsArray_s));
     int False=1,a,b;
-    nb_unite->numOfUnits=MAX_UNITS;
+    nb_unite->numOfUnitsTeam0=MAX_UNITS/2;
+    nb_unite->numOfUnitsTeam1=MAX_UNITS/2;
     for(int i=0;i<MAX_UNITS;i++)
     {
         nb_unite->units[i].unitId=i;
         nb_unite->units[i].hp=MAX_HP;
         if(i==MAX_UNITS-2) //Initialisation leader 1
         {
-            nb_unite->units[i].owner=0;
-            nb_unite->units[i].unit_type=1;
+            nb_unite->units[i].owner=first;
+            nb_unite->units[i].unit_type=cultLeader;
             nb_unite->units[i].x=3;
             nb_unite->units[i].y=0;
         }
         else if(i==MAX_UNITS-1) //Initialisation leader 2
         {
-            nb_unite->units[i].owner=1;
-            nb_unite->units[i].unit_type=1;
+            nb_unite->units[i].owner=second;
+            nb_unite->units[i].unit_type=cultLeader;
             nb_unite->units[i].x=3;
             nb_unite->units[i].y=12;
         }
@@ -28,7 +29,7 @@ unitsArray init_units(){
         {
             nb_unite->units[i].owner=first;
             //nb_unite->units[i].unit_type=0;
-            if(i>= MAX_UNITS/2)
+            if(i>= (MAX_UNITS/2)-1)
             {
                 nb_unite->units[i]=nb_unite->units[i-MAX_UNITS/2];
 		        nb_unite->units[i].unitId=i;
@@ -54,6 +55,7 @@ unitsArray init_units(){
             } 
         }
     }
+    return nb_unite;
 }
 
 
@@ -61,22 +63,23 @@ unitsArray init_units(){
 unitsArray init_unitsdif(){
     unitsArray nb_unite=malloc(sizeof(struct unitsArray_s));
     int False=1,a,b;
-    nb_unite->numOfUnits=MAX_UNITS;
+    nb_unite->numOfUnitsTeam0=MAX_UNITS/2;
+    nb_unite->numOfUnitsTeam1=MAX_UNITS/2;
     for(int i=0;i<MAX_UNITS;i++)
     {
         nb_unite->units[i].unitId=i;
-        nb_unite->units[i].hp=MAX_HP-i;
+        nb_unite->units[i].hp=MAX_HP-i+10;
         if(i==MAX_UNITS-2) //Initialisation leader 1
         {
-            nb_unite->units[i].owner=0;
-            nb_unite->units[i].unit_type=1;
+            nb_unite->units[i].owner=first;
+            nb_unite->units[i].unit_type=cultLeader;
             nb_unite->units[i].x=3;
             nb_unite->units[i].y=0;
         }
         else if(i==MAX_UNITS-1) //Initialisation leader 2
         {
-            nb_unite->units[i].owner=1;
-            nb_unite->units[i].unit_type=1;
+            nb_unite->units[i].owner=second;
+            nb_unite->units[i].unit_type=cultLeader;
             nb_unite->units[i].x=3;
             nb_unite->units[i].y=12;
         }
@@ -84,12 +87,12 @@ unitsArray init_unitsdif(){
         {
             nb_unite->units[i].owner=first;
             //nb_unite->units[i].unit_type=0;
-            if(i>= MAX_UNITS/2)
+            if(i>=(MAX_UNITS/2)-1)
             {
                 nb_unite->units[i]=nb_unite->units[i-MAX_UNITS/2];
 		        nb_unite->units[i].unitId=i;
                 nb_unite->units[i].owner=second;
-                nb_unite->units[i].hp=MAX_HP-i;
+                nb_unite->units[i].hp=MAX_HP-i+10;
                 nb_unite->units[i].y=12-nb_unite->units[i].y;
                 //plateau[nb_unite->units[i].x][nb_unite->units[i].y]='u';
             }
@@ -110,15 +113,19 @@ unitsArray init_unitsdif(){
             } 
         }
     }
+    return nb_unite;
 }
 
 
 int main(){
-    printf("Test evaluate board");
     unitsArray test=init_units();
-    printf("%d\n",evaluate_board(test,second));
+    printf("Test evaluate board\n");
+    int score=evaluate_board(test,second);
+    printf("%d\n",score);
     free(test);
     test=init_unitsdif();
-    printf("%d\n",evaluate_board(test,first));
-    printf("%d\n",evaluate_board(test,second));
+    score=evaluate_board(test,second);
+    printf("%d\n",score);
+    score=evaluate_board(test,first);
+    printf("%d\n",score);
 }
