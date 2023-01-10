@@ -8,7 +8,7 @@
 void initGame(board plateau, unitsArray nb_unite)
 {
     int compt = 0, n, x, False = 1, a, b, t, attention = 0;
-    srand(time(NULL));
+    srand(time(NULL)); //permet de générer des seed aléatoire pour la fonction rand()
     // Initialisation du board et des obstacles
     for (int i = 0; i < HEIGHT; i++)
     {
@@ -269,13 +269,24 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
             nb_unite->numOfUnitsTeam1 = 0;
     }
 }
-void convert(board plateau, unitsArray nb_unite, int unitId, int targetId)
+void convert(board plateau, unitsArray nb_unite, int player, int targetId)
 {
 
-    int x = nb_unite->units[unitId].x, y = nb_unite->units[unitId].y, x1 = nb_unite->units[targetId].x, y1 = nb_unite->units[targetId].y;
-    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != nb_unite->units[unitId].owner && (unitId == 12 || unitId == 13) && (targetId != 12 || targetId != 13))
+    int x,y;
+    int x1 = nb_unite->units[targetId].x, y1 = nb_unite->units[targetId].y;
+    if(player == 0)
     {
-        if (nb_unite->units[unitId].owner == 0)
+        x = nb_unite->units[12].x;
+        y = nb_unite->units[12].y;
+    }
+    else
+    {
+        x = nb_unite->units[13].x;
+        y = nb_unite->units[13].y;
+    }
+    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 12 && targetId != 13)
+    {
+        if (player == 0)
         {
             nb_unite->units[targetId].owner = 0;
             plateau[x1][y1] = 'A';
@@ -287,12 +298,11 @@ void convert(board plateau, unitsArray nb_unite, int unitId, int targetId)
             plateau[x1][y1] = 'B';
             nb_unite->numOfUnitsTeam1++;
         }
-        // printBoard(plateau);
     }
     else
     {
         printf("\n////////////Le leader ne peut pas convertir.////////////\n");
-        if (nb_unite->units[unitId].owner == 0)
+        if (player == 0)
             nb_unite->numOfUnitsTeam0 = 0;
         else
             nb_unite->numOfUnitsTeam1 = 0;

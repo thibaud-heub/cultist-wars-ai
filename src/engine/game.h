@@ -3,7 +3,7 @@
 
 #include "game_types.h" 
  
-void initGame(board, unitsArray); //initialize the board, put obstacles and neutral units (symetric)
+void initGame(board plateau, unitsArray); //initialize the board, put obstacles and neutral units (symetric)
 
 void printBoard(board plateau); //print the board on terminal
 
@@ -11,11 +11,11 @@ void wait(void);
 
 void print_unitsArray(unitsArray nb_unite); //print the unitsArray
 
-void move(board, int player, unitsArray, int unitId, int x, int y);
-
 void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId);
 
-void convert(board, unitsArray, int unitId, int targetId);
+void move(board, int player, unitsArray nb_unite, int unitId, int x, int y);
+
+void convert(board, unitsArray, int player, int targetId);
 
 #endif
 
