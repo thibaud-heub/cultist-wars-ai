@@ -5,8 +5,8 @@
 
 struct zqueue{
     int size;
-    List first;
-    List last;
+    List front;
+    List back;
 };
 typedef struct zqueue *Queue;
 

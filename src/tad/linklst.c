@@ -15,7 +15,10 @@
  * @returns The NULL pointer
  */
 List createEmptyList (void) {
-    return NULL;
+    List tmp;
+    tmp.first=NULL;
+    tmp.last=NULL;
+    return tmp;
 }
 
 
@@ -27,7 +30,7 @@ List createEmptyList (void) {
  * @returns A Bool containing the result
  */
 Bool isEmptyList (List _list) {
-    return (_list == NULL) ? 1 : 0;
+    return (_list->first == NULL) ? 1 : 0;
 }
 
 
@@ -41,7 +44,7 @@ Data head (List _list) {
     // Can only return the head of a non-empty list
     assert(!isEmptyList(_list));
 
-    return _list->element;
+    return _list.first->element;
 }
 
 
@@ -54,8 +57,11 @@ Data head (List _list) {
 List tail (List _list) {
     // Can only return the tail of a non-empty list
     assert(!isEmptyList(_list));
-    
-    return _list->next_link;
+    List tmp;
+    tmp.first= _list.first->next_link;
+    if(tmp.first==NULL) tmp.last=NULL;
+    else tmp.last=_list.last;
+    return tmp;
 }
 
 
@@ -68,10 +74,15 @@ List tail (List _list) {
  * @returns A new list containing the new data
  */
 List add (Data _data, List _list) {
-    List new_link = (List)malloc(__LINK_SIZE__);
+    Maillon * new_link = (List)malloc(__LINK_SIZE__);
     new_link->element = _data;
     new_link->next_link = _list;
-    return new_link;
+    if(isEmptyList(_list))
+    {
+        _list.last=new_link;
+    }
+    _list.first=new_link;
+    return _list;
 }
 
 
@@ -85,7 +96,7 @@ List add (Data _data, List _list) {
  * 
  * @param _link A pointer to a link (List object)
  */
-void freeLink (List _link) {
+void freeLink (Maillon* _link) {
     free(_link);
 }
 
@@ -100,7 +111,7 @@ void freeList (List _list) {
         // Free the end of the list
         freeList(tail(_list));
         // Free the head (only remaining element)
-        freeLink(_list);
+        freeLink(_list.first);
     }
 }
 

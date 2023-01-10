@@ -1,66 +1,66 @@
 #include <stdlib.h>
 #include "searchMouv.h"
 #include "../engine/game_types.h"
-#include "../tad/queue.h"
+#include "../tad/linklst.h"
 
-Queue deplacement(board plateau, unitsArray tab_unite, int uniteID)
+Static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
 {
-    Queue moving=create_empty_queue();
-
+    List moving=createEmptyList();
     int x1 = tab_unite->units[uniteID].x;
     int y1 = tab_unite->units[uniteID].y;
+    result Dep;
 
-    if(plateau[x1][y1+1] == '0')
+    if((y1+1)<HEIGHT && plateau[x1][y1+1]=='0')
     {
-        result Dep1=malloc(sizeof(struct data_mouv));
+        Dep=malloc(sizeof(struct data_mouv));
 
-        Dep1->studied_unit=uniteID;
-        Dep1->type_mouve=move;
-        Dep1->deplacement=north;
-        Dep1->targetId=-1;
+        Dep->studied_unit=uniteID;
+        Dep->type_mouve=depl;
+        Dep->deplacement=north;
+        Dep->targetId=-1;
 
-        push_back(Dep1,moving);
+        add(Dep,moving);
     }
-    if(plateau[x1][y1-1] == '0')
+    if((y1-1)>=0 && plateau[x1][y1-1]=='0')
     {
-        result Dep2=malloc(sizeof(struct data_mouv));
+        Dep=malloc(sizeof(struct data_mouv));
 
-        Dep2->studied_unit=uniteID;
-        Dep2->type_mouve=move;
-        Dep2->deplacement=south;
-        Dep2->targetId=-1;
+        Dep->studied_unit=uniteID;
+        Dep->type_mouve=depl;
+        Dep->deplacement=south;
+        Dep->targetId=-1;
 
-        push_back(Dep2,moving);
+        add(Dep,moving);
     }
-    if(plateau[x1+1][y1] == '0')
+    if((x1+1)<WIDTH && plateau[x1+1][y1]=='0')
     {
-        result Dep3=malloc(sizeof(struct data_mouv));
+        Dep=malloc(sizeof(struct data_mouv));
 
-        Dep3->studied_unit=uniteID;
-        Dep3->type_mouve=move;
-        Dep3->deplacement=east;
-        Dep3->targetId=-1;
+        Dep->studied_unit=uniteID;
+        Dep->type_mouve=depl;
+        Dep->deplacement=east;
+        Dep->targetId=-1;
 
-        push_back(Dep3,moving);
+        add(Dep,moving);
     }
-    if(plateau[x1-1][y1] == '0')
+    if((x1-1)>=0 && plateau[x1-1][y1]=='0')
     {
-        result Dep4=malloc(sizeof(struct data_mouv));
+        Dep=malloc(sizeof(struct data_mouv));
 
-        Dep4->studied_unit=uniteID;
-        Dep4->type_mouve=move;
-        Dep4->deplacement=west;
-        Dep4->targetId=-1;
+        Dep->studied_unit=uniteID;
+        Dep->type_mouve=depl;
+        Dep->deplacement=west;
+        Dep->targetId=-1;
 
-        push_back(Dep2,moving);
+        add(Dep,moving);
     }
 
     return moving;
 }
 
-Queue tir_all(board plateau, unitsArray tab_unite, int uniteID)
+Static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
 {
-    Queue shoot=create_empty_queue();
+    List shoot=create_empty_List();
 
     int dx,dy,i,xinc,yinc,cumul,x,y,compt=0,touche=0;
     int xi = tab_unite->units[uniteID].x;
@@ -69,14 +69,101 @@ Queue tir_all(board plateau, unitsArray tab_unite, int uniteID)
     return shoot;
 }
 
-Queue conversion(board plateau, unitsArray tab_unite, int uniteID)
+Static List conversion(board plateau, unitsArray tab_unite, int uniteID)
 {
-    Queue convert=create_empty_queue();
+    List convert=create_empty_List();
+
+    int x1 = tab_unite->units[uniteID].x;
+    int y1 = tab_unite->units[uniteID].y;
+    int i;
+    result Co;
+    char test;
+
+    if (tab_unite->units[uniteID].owner==first) test='B';
+    else test='A';
+
+    if((y1+1)<HEIGHT && ((test==plateau[x1][y1+1]) || plateau[x1][y1+1]=='u'))
+    {   
+        Co=malloc(sizeof(struct data_mouv));
+
+        Co->studied_unit=uniteID;
+        Co->type_mouve=conv;
+        Co->deplacement=-1;
+        Co->targetId= ;
+
+        add(Co,convert);
+    }
+    if((y1-1)>=0 && ((test==plateau[x1][y1-1]) || plateau[x1][y1-1]=='u'))
+    {   
+        Co=malloc(sizeof(struct data_mouv));
+
+        Co->studied_unit=uniteID;
+        Co->type_mouve=conv;
+        Co->deplacement=-1;
+        Co->targetId= ;
+
+        add(Co,convert);
+    }
+    if((x1+1)<WIDTH && ((test==plateau[x1+1][y1]) || plateau[x1+1][y1]=='u'))
+    {   
+        Co=malloc(sizeof(struct data_mouv));
+
+        Co->studied_unit=uniteID;
+        Co->type_mouve=conv;
+        Co->deplacement=-1;
+        Co->targetId= ;
+
+        add(Co,convert);
+    }
+    if((x1-1)>=0 && ((test==plateau[x1-1][y1]) || plateau[x1-1][y1]=='u'))
+    {   
+        Co=malloc(sizeof(struct data_mouv));
+
+        Co->studied_unit=uniteID;
+        Co->type_mouve=conv;
+        Co->deplacement=-1;
+        Co->targetId= ;
+
+        add(Co,convert);
+    }
 
     return convert;
 }
 
-Queue rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
+Static List concatenation(List a, List b)
 {
+    if(is_empty_List(a)) return b;
+    else if(is_empty_List(b)) return a;
+    else
+    {
+        a.last->next=b.front;
+        a.last=b.last;
+        return a;
+    }
+}
 
+Static List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
+{
+    if(tab_unite->units[uniteID].unit_type==cultLeader) 
+    return concatenation(deplacement(plateau,tab_unite,uniteID),conversion(plateau,tab_unite,uniteID));
+    else
+    return concatenation(deplacement(plateau,tab_unite,uniteID),tir_all(plateau,tab_unite,uniteID));
+}
+
+List all_mvt(board plateau, unitsArray tab_unite, enum playerId whoplay)
+{
+    List ALL=create_empty_List();
+    List tmp=create_empty_List();
+    int i;
+
+    for(i=0;i<MAX_UNITS;i=i+1)
+    {
+        if(tab_unite->units[i].owner==whoplay)
+        {
+            tmp=rechercheMouvement(plateau,tab_unite,i);
+            ALL=concatenation(ALL,tmp);
+        }
+    }
+
+    return ALL;
 }

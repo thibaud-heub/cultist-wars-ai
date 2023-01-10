@@ -14,9 +14,9 @@
 //-----------------------------------------------
 
 enum mouv{
-    move,
+    depl,
     tir,
-    convert
+    conv
 };
 
 enum dep{
@@ -37,12 +37,15 @@ typedef struct data_mouv* result;
 typedef result Data;
 typedef char Bool;
 
-struct __s_List {
+typedef struct __s_Maillon {
     Data element;
-    struct __s_List *next;
-};
+    struct __s_Maillon *next;
+}Maillon;
 
-typedef struct __s_List * List;
+typedef struct __s_List{
+    Maillon * first;
+    Maillon * last;
+} List;
 
 
 //-----------------------------------------------
@@ -61,11 +64,12 @@ Bool isEmptyList (List _list);
 //----- Memory management functions
 
 List copyList (List _list);
-void freeLink (List _link);
+void freeLink (Maillon* _link);
 void freeList (List _list);
 
 //----- Toolbox
 
 void printList(List _list);
+void printResult(result Mouv);
 
 #endif
