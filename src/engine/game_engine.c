@@ -66,7 +66,7 @@ int action(int player, board plateau, unitsArray nb_unite, int turn)
 }
 int end_of_game(board plateau, unitsArray nb_unite, int player, int turn) // 0: le jeu n'est pas fini , 1: le jeu est fini
 {
-    if (nb_unite->numOfUnitsTeam0 == 12 || nb_unite->numOfUnitsTeam1 == 12)
+    if (nb_unite->numOfUnitsTeam0 == 0 || nb_unite->numOfUnitsTeam1 == 0)
         return 1;
     if (turn < MAX_TURNS) // nombre de tour MAX atteint
     {
@@ -76,7 +76,7 @@ int end_of_game(board plateau, unitsArray nb_unite, int player, int turn) // 0: 
 }
 int who_wins(unitsArray nb_unite) // renvoie l'Id du joueur qui a gagné
 {
-    if (nb_unite->numOfUnitsTeam0 > nb_unite->numOfUnitsTeam1)
+    if (nb_unite->numOfUnitsTeam0 >= nb_unite->numOfUnitsTeam1) //Cas dégalité : le gagnant est le joueur 0
         return 0;
     else
         return 1;
@@ -100,6 +100,6 @@ int main(int argc, char const *argv[])
             joueur--;
         }
     }
-    printf("Le joueur %d gagne.", who_wins(nb_unite));
+    printf("Fin de la partie : Le joueur %d gagne.\n\n", who_wins(nb_unite));
     return 0;
 }
