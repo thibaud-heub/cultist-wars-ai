@@ -8,6 +8,7 @@
 void initGame(board plateau, unitsArray nb_unite)
 {
     int compt=0,n,x,False=1,a,b,t,attention = 0;
+    srand(time(NULL));
     //Initialisation du board et des obstacles
     for(int i=0;i<HEIGHT;i++)
     {
@@ -59,7 +60,7 @@ void initGame(board plateau, unitsArray nb_unite)
                 nb_unite->units[i]=nb_unite->units[i-(MAX_UNITS/2-1)];
 		        nb_unite->units[i].unitId=i;
                 nb_unite->units[i].y=12-nb_unite->units[i].y;
-                //plateau[nb_unite->units[i].x][nb_unite->units[i].y]='u';
+                plateau[nb_unite->units[i].x][nb_unite->units[i].y]='u';
             }
             else 
             {
@@ -69,7 +70,7 @@ void initGame(board plateau, unitsArray nb_unite)
                     b=1 + rand() % 5;
                     for(t=0;t<=i;t++)
                     {
-                        if(nb_unite->units[t].x == a && nb_unite->units[t].y == b && attention == 0 && plateau[a][b] == 'X')
+                        if((nb_unite->units[t].x == a && nb_unite->units[t].y == b && attention == 0) || plateau[a][b] == 'X')
                         {
                             attention = 1;//attention : permet de dire si il y a une unité déja présente
                         }
@@ -78,7 +79,7 @@ void initGame(board plateau, unitsArray nb_unite)
                     {
                         nb_unite->units[i].x=a;
                         nb_unite->units[i].y=b;
-                        //plateau[a][b]='u'; //commande qui permet de savoir ou sont les unités
+                        plateau[a][b]='u'; //commande qui permet de savoir ou sont les unités
                         False = 0;
                     } 
                     attention = 0;
@@ -217,7 +218,7 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
         {
             if(nb_unite->units[i].x == x && nb_unite->units[i].y == y && end == 0)
             {
-                end=1;
+                end = 1;
             }
         }
         if(end == 1)
@@ -226,9 +227,10 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
         }
         else
         {
-            /*plateau[x1][y1]='0';
-            if(uniteId >=12) plateau[x][y]='1';
-            else plateau[x][y]='u';*/
+            plateau[x1][y1]='0';
+            if(uniteId ==12) plateau[x][y]='1';
+            else if(uniteId == 13 ) plateau[x][y]='2';
+            else plateau[x][y]='u';
             nb_unite->units[uniteId].x = x;
             nb_unite->units[uniteId].y = y;
         }
@@ -247,13 +249,13 @@ void convert(board plateau, unitsArray nb_unite, int unitId, int targetId)
         if(nb_unite->units[unitId].owner == 0) 
         {
             nb_unite->units[targetId].owner = 0;
-            //plateau[x1][y1]='A';
+            plateau[x1][y1]='A';
             nb_unite->numOfUnitsTeam0++;
         }
         else 
         {
             nb_unite->units[targetId].owner = 1;
-            //plateau[x1][y1]='B';
+            plateau[x1][y1]='B';
             nb_unite->numOfUnitsTeam1++;
         }
         //printBoard(plateau);
