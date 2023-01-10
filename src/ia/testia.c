@@ -1,4 +1,6 @@
 #include "ia.h"
+#include "searchMouv.h"
+#include "../engine/game.h"
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -128,4 +130,8 @@ int main(){
     printf("%d\n",score);
     score=evaluate_board(test,first);
     printf("%d\n",score);
+    board TestPlateau;
+    initGame(TestPlateau,test);
+    Queue TestDep=deplacement(TestPlateau,test,4);
+    printQueue(TestDep);
 }
