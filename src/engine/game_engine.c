@@ -83,13 +83,13 @@ int who_wins(unitsArray nb_unite) // renvoie l'Id du joueur qui a gagné
 }
 int main(int argc, char const *argv[])
 {
-    int fin = 0, turn = 0, joueur = 0;
+    //int fin = 0, turn = 0, joueur = 0;
     board plateau;
     unitsArray nb_unite = malloc(sizeof(struct unitsArray_s));
     initGame(plateau, nb_unite);
     print_unitsArray(nb_unite);
     printBoard(plateau);
-    while (!fin)
+    /*while (!fin)
     {
         fin = action(joueur, plateau, nb_unite, turn);
         if (fin == 0)
@@ -100,6 +100,6 @@ int main(int argc, char const *argv[])
             joueur--;
         }
     }
-    printf("Fin de la partie : Le joueur %d gagne.\n\n", who_wins(nb_unite));
+    printf("Fin de la partie : Le joueur %d gagne.\n\n", who_wins(nb_unite));*/
     return 0;
 }

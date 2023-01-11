@@ -22,7 +22,7 @@ enum unitType
     cultLeader
 };
 
-typedef char board[HEIGHT][WIDTH];
+typedef int board[HEIGHT][WIDTH];
 
 
 typedef struct unit_s
@@ -39,7 +39,7 @@ typedef struct unitsArray_s
 {   
     int numOfUnitsTeam0;
     int numOfUnitsTeam1;
-    unit units[MAX_UNITS];
+    unit units[MAX_UNITS+1];
 } *unitsArray;
 
 #endif
