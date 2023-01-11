@@ -3,7 +3,7 @@
 #include "../engine/game_types.h"
 #include "../tad/linklst.h"
 
-Static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
+static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
 {
     List moving=createEmptyList();
     int x1 = tab_unite->units[uniteID].x;
@@ -58,20 +58,95 @@ Static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
     return moving;
 }
 
-Static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
+static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
 {
-    List shoot=create_empty_List();
+    List shoot=createEmptyList();
+    result shooting;
 
     int dx,dy,i,xinc,yinc,cumul,x,y,compt=0,touche=0;
     int xi = tab_unite->units[uniteID].x;
     int yi = tab_unite->units[uniteID].y;
+    int j,k;
+    char tmp1,tmp2;
+
+    x = xi;
+    y = yi;
+
+    if(tab_unite->units[uniteID].owner==first) tmp1='A',tmp2='1';
+    else tmp1='B',tmp2='2';
+
+    for(j=0;j<HEIGHT;j++)
+    {
+        for(k=0;k<WIDTH;k++)
+        {
+            if(plateau[j][k]!=tmp1 && plateau[j][k]!=tmp2)
+            {
+                dx = k - xi ;
+                dy = j - yi ;
+                xinc = ( dx > 0 ) ? 1 : -1 ;
+                yinc = ( dy > 0 ) ? 1 : -1 ;
+                dx = abs(dx) ;
+                dy = abs(dy) ;
+                if ( dx > dy ) 
+                {
+                    cumul = dx / 2 ;
+                    for (i=1;i<=dx;i++) 
+                    {
+                        x += xinc ;
+                        cumul += dy ;
+                        if (cumul>=dx) 
+                        {
+                            cumul -= dx ;
+                            y += yinc ; 
+                        }
+                        if(plateau[x][y]=='X')
+                        {
+                            printf("Le tir a touché un obstacle.\n");
+                            touche = 1;
+                        }
+                        compt++;
+                    } 
+                }
+                else {
+                    cumul = dy / 2 ;
+                    for (i=1;i<=dy;i++) 
+                    {
+                        y += yinc ;
+                        cumul += dx ;
+                        if (cumul>=dy) 
+                        {
+                            cumul -= dy ;
+                            x += xinc ; 
+                        }
+                        if(plateau[x][y]=='X')
+                        {
+                            printf("Le tir a touché un obstacle.\n");
+                            touche = 1;
+                        }
+                        compt++;
+                    } 
+                }
+                if(touche == 0 && compt<=7)
+                {
+                    shooting=malloc(sizeof(struct data_mouv));
+
+                    shooting->studied_unit=uniteID;
+                    shooting->type_mouve=tir;
+                    shooting->deplacement=-1;
+                    shooting->targetId= ;
+
+                    add(shooting,shoot);
+                }
+            }
+        }
+    }
 
     return shoot;
 }
 
-Static List conversion(board plateau, unitsArray tab_unite, int uniteID)
+static List conversion(board plateau, unitsArray tab_unite, int uniteID)
 {
-    List convert=create_empty_List();
+    List convert=createEmptyList();
 
     int x1 = tab_unite->units[uniteID].x;
     int y1 = tab_unite->units[uniteID].y;
@@ -130,19 +205,19 @@ Static List conversion(board plateau, unitsArray tab_unite, int uniteID)
     return convert;
 }
 
-Static List concatenation(List a, List b)
+static List concatenation(List a, List b)
 {
     if(is_empty_List(a)) return b;
     else if(is_empty_List(b)) return a;
     else
     {
-        a.last->next=b.front;
+        a.last->next=b.first;
         a.last=b.last;
         return a;
     }
 }
 
-Static List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
+static List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
 {
     if(tab_unite->units[uniteID].unit_type==cultLeader) 
     return concatenation(deplacement(plateau,tab_unite,uniteID),conversion(plateau,tab_unite,uniteID));
@@ -152,8 +227,8 @@ Static List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
 
 List all_mvt(board plateau, unitsArray tab_unite, enum playerId whoplay)
 {
-    List ALL=create_empty_List();
-    List tmp=create_empty_List();
+    List ALL=createEmptyList();
+    List tmp=createEmptyList();
     int i;
 
     for(i=0;i<MAX_UNITS;i=i+1)
