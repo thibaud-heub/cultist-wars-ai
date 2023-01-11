@@ -39,7 +39,7 @@ typedef struct unitsArray_s
 {   
     int numOfUnitsTeam0;
     int numOfUnitsTeam1;
-    unit units[MAX_UNITS+1];
+    unit units[MAX_UNITS+1]; //permet d'avoir les unités dans l'intervale [1;14] et pas 0 qui ne s'affiche pas
 } *unitsArray;
 
 #endif

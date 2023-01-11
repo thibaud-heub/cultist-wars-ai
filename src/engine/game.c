@@ -9,7 +9,7 @@
 void initGame(board plateau, unitsArray nb_unite)
 {
     int compt = 0, n, x, False = 1, a, b, t, attention = 0;
-    //srand(time(NULL)); //permet de générer des seed aléatoire pour la fonction rand()
+    srand(time(NULL)); //permet de générer des seed aléatoire pour la fonction rand()
     // Initialisation du board et des obstacles
     for (int i = 0; i < HEIGHT; i++)
     {
@@ -30,7 +30,7 @@ void initGame(board plateau, unitsArray nb_unite)
         }
     }
     // Initialisation unitsArray
-    nb_unite->numOfUnitsTeam0 = 1; // le leader est compté
+    nb_unite->numOfUnitsTeam0 = 1; // le leader est compté dans le total des unités
     nb_unite->numOfUnitsTeam1 = 1;
     for (int i = 1; i <= MAX_UNITS; i++)
     {
@@ -145,6 +145,8 @@ void printBoard(board plateau)
 void print_unitsArray(unitsArray nb_unite)
 {
     printf("\n");
+    printf("Nombre unités Team 0 : %d\n",nb_unite->numOfUnitsTeam0);
+    printf("Nombre unités Team 1 : %d\n\n",nb_unite->numOfUnitsTeam1);
     for (int i = 1; i <= MAX_UNITS; i++)
     {
         printf("Unité n°%d, Team: %d, hp:%d, x=%d, y=%d\n", nb_unite->units[i].unitId, nb_unite->units[i].owner, nb_unite->units[i].hp, nb_unite->units[i].x, nb_unite->units[i].y);
@@ -152,13 +154,13 @@ void print_unitsArray(unitsArray nb_unite)
 }
 void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
 {
-    int dx, dy, i, xinc, yinc, cumul, x, y, compt = 0, touche = 0;
+    int dx, dy, i, xinc, yinc, cumul, x, y, compt = 0, touche = 0,compt_touch2 = 0; // touche : 0 rien n'a été touché, 1 un obstacle a été touché, 2 un ennemis a été touché
     int xi = nb_unite->units[uniteId].x;
     int yi = nb_unite->units[uniteId].y;
     int xf = nb_unite->units[targetId].x;
     int yf = nb_unite->units[targetId].y;
 
-    if(uniteId != targetId && uniteId < MAX_UNITS && targetId < MAX_UNITS)
+    if(uniteId != targetId && uniteId <= MAX_UNITS && uniteId >= 1 && targetId <= MAX_UNITS && targetId >=1 )
     {
         x = xi;
         y = yi;
@@ -180,12 +182,16 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
                     cumul -= dx;
                     y += yinc;
                 }
-                if (plateau[x][y] == -1)
+                if (plateau[x][y] == -1 && touche == 0)
                 {
                     printf("Le tir a touché un obstacle.\n");
                     touche = 1;
                 }
-                // plateau[x][y]='T';
+                else if(plateau[x][y] >= 1 && plateau[x][y] <= MAX_UNITS && touche == 0)
+                {
+                    touche = 2;
+                    targetId = plateau[x][y];
+                }
                 compt++;
             }
         }
@@ -201,18 +207,26 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
                     cumul -= dy;
                     x += xinc;
                 }
-                if (plateau[x][y] == -1)
+                if (plateau[x][y] == -1 && touche == 0)
                 {
                     printf("Le tir a touché un obstacle.\n");
                     touche = 1;
                 }
-                // plateau[x][y]='T';
+                else if(plateau[x][y] >= 1 && plateau[x][y] <= MAX_UNITS && touche == 0)
+                {
+                    touche = 2;
+                    targetId = plateau[x][y];
+                    compt_touch2 = compt+1;
+                }
                 compt++;
             }
         }
-        if (touche == 0 && compt <= MAX_DAMAGE && nb_unite->units[targetId].hp != 0)
+        if ((touche == 0 || touche == 2) && compt <= MAX_DAMAGE && nb_unite->units[targetId].hp != 0)
         {
-            nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt);
+            if(touche == 2)
+                nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt_touch2);
+            else 
+                nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt);
             if (nb_unite->units[targetId].hp == 0)
             {
                 if (nb_unite->units[targetId].owner == 0)
