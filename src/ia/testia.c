@@ -1,6 +1,7 @@
 #include "ia.h"
 #include "searchMouv.h"
 #include "../engine/game.h"
+#include"../tad/linklst.h"
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -121,6 +122,9 @@ unitsArray init_unitsdif(){
 
 int main(){
     unitsArray test=init_units();
+    board TestPlateau;
+    List TestDep;
+    result testprint=malloc(sizeof(struct data_mouv));
     printf("Test evaluate board\n");
     int score=evaluate_board(test,second);
     printf("%d\n",score);
@@ -130,8 +134,18 @@ int main(){
     printf("%d\n",score);
     score=evaluate_board(test,first);
     printf("%d\n",score);
-    board TestPlateau;
+    printf("Fin du test\n");
+    printf("Test evaluate printresult\n");
+    testprint->deplacement=depl;
+    testprint->studied_unit=1;
+    testprint->targetId=(-1);
+    testprint->type_mouve=west;
+    printResult(testprint);
+    printf("Fin du test\n");
     initGame(TestPlateau,test);
-    Queue TestDep=deplacement(TestPlateau,test,4);
-    printQueue(TestDep);
+    printBoard(TestPlateau);
+    printf("Test evaluate mvt\n");
+    TestDep=deplacement(TestPlateau,test,1);
+    printList(TestDep);
+    printf("Fin du test\n");
 }

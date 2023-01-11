@@ -42,10 +42,12 @@ typedef struct __s_Maillon {
     struct __s_Maillon *next;
 }Maillon;
 
-typedef struct __s_List{
+struct __s_List{
     Maillon * first;
     Maillon * last;
-} List;
+};
+
+typedef struct __s_List List;
 
 
 //-----------------------------------------------

@@ -1,31 +1,38 @@
 #include<stdlib.h>
+#include"../tad/linklst.h"
 #include "ia.h"
 
-ia_result init_node(board plateau,unitsArray Lunit){
-    ia_result init=malloc(sizeof(struct ia_result_z));
-    init->plateau=plateau;
-    init->Lunit=Lunit;
+Item init_Item(board plateau,unitsArray Lunit){
+    Item init=malloc(sizeof(struct ia_result_z));
+    copyBoard(plateau,init->plateau);
+    init->Lunit=copyUnistArray(Lunit);
     init->mvt=NULL;
     return init;
 }
 
-/*ia_result alpha_beta(ia_result node,int depth,enum playerId whoplay,enum playerId iaPlayer,int alpha,int beta){
-    list child;
+/*ia_result alpha_beta(Item node,int depth,enum playerId whoplay,enum playerId iaPlayer,int alpha,int beta){
+    List child;
     result childStudy, bestChild;
-    child=all_mvt(plateau,Lunit,whoplay);
+    ia_result solution=malloc(sizeof(struct ia_result_z));
     if(depth==MAX_DEPTH){
-        return evaluate_board(Lunit,whoplay);
-    }
-    if(){  si child est vide discussion avec Félix !!!!!!!!!!!!!!!
-        azert
+        solution->mvt=node->mvt;
+        solution->value=evaluate_board(node->Lunit,whoplay);
+        return solution;
     }
     else{
-        return;
-    //}
+        child=all_mvt(node->plateau,node->Lunit,whoplay);
+        if(isEmptyList(child)){ 
+            solution->mvt=node->mvt;
+            solution->value=evaluate_board(node->Lunit,whoplay);
+            return solution;
+        }
+        else{
+            solution->mvt=node->mvt;
+            solution->value=evaluate_board(node->Lunit,whoplay);
+            return solution;
+        }
+    }
 }*/
-
-
-
 
 int evaluate_board(unitsArray Lunit,enum playerId whoplay){
     int score=0,i;
@@ -46,6 +53,22 @@ int evaluate_board(unitsArray Lunit,enum playerId whoplay){
     return score;
 }
 
-/*list all_mvt(board plateau,unitsArray Lunit,enum playerId whoplay){
-    return rechercheMouvement(plateau,Lunit,1);
-}*/
+void copyBoard(board initial,board copy){
+    int i,j;
+    for (i=0;i<HEIGHT;i++){
+        for(j=0;j<WIDTH;j++){
+            copy[i][j]=initial[i][j];
+        }
+    }
+}
+
+unitsArray copyUnistArray(unitsArray initial){
+    unitsArray copy=malloc(sizeof(struct unitsArray_s));
+    int i;
+    copy->numOfUnitsTeam0=initial->numOfUnitsTeam0;
+    copy->numOfUnitsTeam1=initial->numOfUnitsTeam1;
+    for (i=0;i<MAX_UNITS;i++){
+        copy->units[i]=initial->units[i];
+    }
+    return copy;
+}

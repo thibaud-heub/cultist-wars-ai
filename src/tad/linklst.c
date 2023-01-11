@@ -30,7 +30,7 @@ List createEmptyList (void) {
  * @returns A Bool containing the result
  */
 Bool isEmptyList (List _list) {
-    return (_list->first == NULL) ? 1 : 0;
+    return (_list.first == NULL) ? 1 : 0;
 }
 
 
@@ -58,7 +58,7 @@ List tail (List _list) {
     // Can only return the tail of a non-empty list
     assert(!isEmptyList(_list));
     List tmp;
-    tmp.first= _list.first->next_link;
+    tmp.first= _list.first->next;
     if(tmp.first==NULL) tmp.last=NULL;
     else tmp.last=_list.last;
     return tmp;
@@ -74,9 +74,9 @@ List tail (List _list) {
  * @returns A new list containing the new data
  */
 List add (Data _data, List _list) {
-    Maillon * new_link = (List)malloc(__LINK_SIZE__);
+    Maillon * new_link = (Maillon *)malloc(__LINK_SIZE__);
     new_link->element = _data;
-    new_link->next_link = _list;
+    new_link->next = _list.first;
     if(isEmptyList(_list))
     {
         _list.last=new_link;
@@ -141,26 +141,36 @@ List copyList(List _list) {
  * @param _list The list to print
  */
 void printList (List _list) {
-    List current_link = _list;
-
-    printf("[");
-    
-    while (!isEmptyList(current_link)) {
+    Maillon * current_link = _list.first;
+    printf("%p\n",_list.first);
+    printf("%p\n",_list.last);
+    while (current_link!=NULL) {
+        //printf("%d\n",current_link->element);
         printResult(current_link->element);
-        current_link = current_link->next_link;
-
-        if (!isEmptyList(current_link)) {
-            printf(", ");
-        }
+        current_link = current_link->next;
     }
-    
-    printf("]\n");
 }
 
 void printResult(result Mouv)
 {
-    printf("[Unité étudiée : %d, ", Mouv->studied_unit);
+    printf("Unite etudiee : %d, ", Mouv->studied_unit);
     printf("Type de mouvement : %d, ", Mouv->type_mouve);
     printf("Deplacement possible : %d, ", Mouv->deplacement);
-    printf("Cible : %d] ", Mouv->targetId);
+    printf("Cible : %d\n ", Mouv->targetId);
 }
+
+
+/*int main(){
+    List test=createEmptyList();
+    if(isEmptyList(test)) {
+        printf("Vrai\n");
+        printList(test);}
+    else printf("False\n");
+    test=add(3,test);
+    if(isEmptyList(test)) printf("Vrai\n");
+    else{
+        printf("False\n");
+        printList(test);
+    } 
+    return 0;
+}*/

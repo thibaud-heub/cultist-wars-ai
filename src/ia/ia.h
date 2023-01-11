@@ -6,21 +6,32 @@
 #define MAX_DEPTH 5
 
 #include "../engine/game_types.h"
+#include"../tad/linklst.h"
 #include "searchMouv.h"
 
 struct ia_result_z{
-    board plateau;
-    unitsArray Lunit;
     result mvt;
     int value;
 };
 
-typedef struct ia_result_z* ia_result;
+typedef struct ia_result_z * ia_result;
 
-ia_result init_node(board plateau,unitsArray Lunit);
+struct Item_z{
+    board plateau;
+    unitsArray Lunit;
+    result mvt;
+};
 
-ia_result alpha_beta(ia_result node,int depth,enum playerId whoplay,enum playerId iaPlayer,int alpha,int beta);
+typedef struct Item_z * Item;
+
+Item init_node(board plateau,unitsArray Lunit);
+
+ia_result alpha_beta(Item node,int depth,enum playerId whoplay,enum playerId iaPlayer,int alpha,int beta);
 
 int evaluate_board(unitsArray Lunit,enum playerId whoplay);
+
+void copyBoard(board initial,board copy);
+
+unitsArray copyUnistArray(unitsArray initial);
 
 #endif

@@ -3,7 +3,7 @@
 #include "../engine/game_types.h"
 #include "../tad/linklst.h"
 
-static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
+ List deplacement(board plateau, unitsArray tab_unite, int uniteID)
 {
     List moving=createEmptyList();
     int x1 = tab_unite->units[uniteID].x;
@@ -58,7 +58,7 @@ static List deplacement(board plateau, unitsArray tab_unite, int uniteID)
     return moving;
 }
 
-static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
+ List tir_all(board plateau, unitsArray tab_unite, int uniteID)
 {
     List shoot=createEmptyList();
     result shooting;
@@ -101,7 +101,6 @@ static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
                         }
                         if(plateau[x][y]=='X')
                         {
-                            printf("Le tir a touché un obstacle.\n");
                             touche = 1;
                         }
                         compt++;
@@ -120,7 +119,6 @@ static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
                         }
                         if(plateau[x][y]=='X')
                         {
-                            printf("Le tir a touché un obstacle.\n");
                             touche = 1;
                         }
                         compt++;
@@ -133,7 +131,7 @@ static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
                     shooting->studied_unit=uniteID;
                     shooting->type_mouve=tir;
                     shooting->deplacement=-1;
-                    shooting->targetId= ;
+                    shooting->targetId= 2; /////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                     add(shooting,shoot);
                 }
@@ -144,13 +142,12 @@ static List tir_all(board plateau, unitsArray tab_unite, int uniteID)
     return shoot;
 }
 
-static List conversion(board plateau, unitsArray tab_unite, int uniteID)
+ List conversion(board plateau, unitsArray tab_unite, int uniteID)
 {
     List convert=createEmptyList();
 
     int x1 = tab_unite->units[uniteID].x;
     int y1 = tab_unite->units[uniteID].y;
-    int i;
     result Co;
     char test;
 
@@ -164,7 +161,7 @@ static List conversion(board plateau, unitsArray tab_unite, int uniteID)
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= ;
+        Co->targetId= 4;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         add(Co,convert);
     }
@@ -175,7 +172,7 @@ static List conversion(board plateau, unitsArray tab_unite, int uniteID)
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= ;
+        Co->targetId= 5;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         add(Co,convert);
     }
@@ -186,7 +183,7 @@ static List conversion(board plateau, unitsArray tab_unite, int uniteID)
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= ;
+        Co->targetId= 6;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         add(Co,convert);
     }
@@ -197,7 +194,7 @@ static List conversion(board plateau, unitsArray tab_unite, int uniteID)
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= ;
+        Co->targetId= 7;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         add(Co,convert);
     }
@@ -205,10 +202,10 @@ static List conversion(board plateau, unitsArray tab_unite, int uniteID)
     return convert;
 }
 
-static List concatenation(List a, List b)
+ List concatenation(List a, List b)
 {
-    if(is_empty_List(a)) return b;
-    else if(is_empty_List(b)) return a;
+    if(isEmptyList(a)) return b;
+    else if(isEmptyList(b)) return a;
     else
     {
         a.last->next=b.first;
@@ -217,7 +214,7 @@ static List concatenation(List a, List b)
     }
 }
 
-static List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
+ List rechercheMouvement(board plateau, unitsArray tab_unite, int uniteID)
 {
     if(tab_unite->units[uniteID].unit_type==cultLeader) 
     return concatenation(deplacement(plateau,tab_unite,uniteID),conversion(plateau,tab_unite,uniteID));
