@@ -64,6 +64,16 @@ List tail (List _list) {
     return tmp;
 }
 
+List tail_with_free (List _list) {
+    // Can only return the tail of a non-empty list
+    assert(!isEmptyList(_list));
+    List tmp;
+    tmp.first= _list.first->next;
+    if(tmp.first==NULL) tmp.last=NULL;
+    else tmp.last=_list.last;
+    freeLink(_list.first);
+    return tmp;
+}
 
 /**
  * Adds an element to the list and return a pointer to the
@@ -111,10 +121,16 @@ void freeList (List _list) {
         // Free the end of the list
         freeList(tail(_list));
         // Free the head (only remaining element)
+        freeResult(head(_list));
         freeLink(_list.first);
     }
 }
 
+
+
+void freeResult(result _result){
+    free(_result);
+}
 
 /**
  * Make a copy of a list and returns the pointer
@@ -162,11 +178,16 @@ void printResult(result Mouv)
 
 /*int main(){
     List test=createEmptyList();
+    result res=malloc(sizeof(struct data_mouv));
+    res->studied_unit=3;
+    res->type_mouve=depl;
+    res->deplacement=east;
+    res->targetId=-1;
     if(isEmptyList(test)) {
         printf("Vrai\n");
         printList(test);}
     else printf("False\n");
-    test=add(3,test);
+    test=add(res,test);
     if(isEmptyList(test)) printf("Vrai\n");
     else{
         printf("False\n");

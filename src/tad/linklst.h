@@ -60,6 +60,7 @@ typedef struct __s_List List;
 List createEmptyList (void);
 List add (Data _data, List _list);
 List tail (List _list);
+List tail_with_free (List _list);
 Data head (List _list);
 Bool isEmptyList (List _list);
 
@@ -68,6 +69,7 @@ Bool isEmptyList (List _list);
 List copyList (List _list);
 void freeLink (Maillon* _link);
 void freeList (List _list);
+void freeResult(result _result);
 
 //----- Toolbox
 

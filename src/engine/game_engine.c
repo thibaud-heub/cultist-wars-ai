@@ -1,9 +1,9 @@
-/**
+/*
  * ----------------------------------------------
  *                 Game_Engine.c
  * ----------------------------------------------
- * 
- * Moteur du jeu, il fait le lien entre 
+ *
+ * Moteur du jeu, il fait le lien entre
  * toutes les fonctions du fichiers game.h
  */
 
@@ -12,103 +12,94 @@
 #include <math.h>
 #include <unistd.h>
 #include "game.h"
+int end_of_game(board plateau, unitsArray nb_unite, int player, int turn);
 
-int action(int player,board plateau,unitsArray nb_unite)
+int action(int player, board plateau, unitsArray nb_unite, int turn)
 {
-    int choix,conv,target_conv,avanc,x,y,tire,target_tire,turn = 0;
-    printf("Joueur %d, à vous de jouer.\n",player);
+    int choix, target_conv, avanc, x, y, tire, target_tire;
+    printf("Tour n°%d : Joueur %d, à vous de jouer.\n", turn, player);
     printf("Vous avez le choix de faire :\n");
     printf("- 0 : Convertir une unité \n");
     printf("- 1 : Faire avancer une unité \n");
     printf("- 2 : Tirer sur une unité \n");
     printf("- 3 : Attendre \n");
-    scanf("%d",&choix);
-    switch(choix)
+    printf("- 4 : Arréter le jeu \n");
+    scanf("%d", &choix);
+    switch (choix)
     {
-        case 0 :
-            printf("Quelle unité va convertir ?");
-            scanf("%d",&conv);
-            printf("Quelle est l'unité ciblée ?");
-            scanf("%d",&target_conv);
-            convert(plateau,nb_unite,conv,target_conv);
-            turn++;
-            break;
-        case 1:
-            printf("Quelle unité va avancer ?");
-            scanf("%d",&avanc);
-            printf("Quelle sont les coordonnées de la case ciblée(libre) ?");
-            scanf("%d %d",&x,&y);
-            move(plateau,nb_unite,avanc,x,y);
-            turn++;
-            break;
-        case 2:
-            printf("Quelle unité va tirer ?");
-            scanf("%d",&tire);
-            printf("Quelle est l'unité ciblée ?");
-            scanf("%d",&target_tire);
-            shoot(plateau,nb_unite,tire,target_tire);
-            turn++;
-            break;
-        default:
-            wait();
-            turn++;
-            break;
-
+    case 0:
+        printf("Quelle est l'unité ciblée ? ");
+        scanf("%d", &target_conv);
+        convert(plateau, nb_unite, player, target_conv);
+        turn++;
+        break;
+    case 1:
+        printf("Quelle unité va avancer ? ");
+        scanf("%d", &avanc);
+        printf("Quelle sont les coordonnées de la case ciblée ? ");
+        scanf("%d %d", &x, &y);
+        move(plateau, player, nb_unite, avanc, x, y);
+        turn++;
+        break;
+    case 2:
+        printf("Quelle unité va tirer ? ");
+        scanf("%d", &tire);
+        printf("Quelle est l'unité ciblée ? ");
+        scanf("%d", &target_tire);
+        shoot(plateau, nb_unite, tire, target_tire);
+        turn++;
+        break;
+    case 3:
+        wait();
+        turn++;
+        break;
+    default:
+        exit(EXIT_SUCCESS);
+        break;
     }
-    sleep(3);
+    printf("Process...\n");
+    sleep(1);
     system("clear");
     print_unitsArray(nb_unite);
     printBoard(plateau);
-    end_of_game(plateau,nb_unite,player,turn);
-    return choix;
+    return end_of_game(plateau, nb_unite, player, turn);
 }
-int end_of_game(board plateau,unitsArray nb_unite, int player,int turn)
+int end_of_game(board plateau, unitsArray nb_unite, int player, int turn) // 0: le jeu n'est pas fini , 1: le jeu est fini
 {
-    int i,j,nb_j0,nb_j1;
-    for(i=1;i<=MAX_UNITS;i++)
+    if (nb_unite->numOfUnitsTeam0 == 0 || nb_unite->numOfUnitsTeam1 == 0)
+        return 1;
+    if (turn < MAX_TURNS) // nombre de tour MAX atteint
     {
-        if(nb_unite->units[i].owner != 0)
-        {
-            return 0;
-        }
+        return 0;
     }
-    if(turn == MAX_TURNS)
-    {
-        for(j=1;j<=MAX_UNITS;j++)
-        {
-            if(nb_unite->units[j].owner == 0) nb_j0++;
-            else if(nb_unite->units[j].owner == 1) nb_j1++;
-        }
-        if(nb_j0 > nb_j1 && player == 0) 
-        {
-            return 1;
-        }
-        else
-        {
-            if(nb_j0 < nb_j1 && player == 1) 
-            {
-                return 1;
-            }
-            return 0;
-        }
-    }
-    return 1;// Le jeu est fini et renvoie 1
+    return 1; // Le jeu est fini et renvoie 1
+}
+int who_wins(unitsArray nb_unite) // renvoie l'Id du joueur qui a gagné
+{
+    if (nb_unite->numOfUnitsTeam0 >= nb_unite->numOfUnitsTeam1) //Cas dégalité : le gagnant est le joueur 0
+        return 0;
+    else
+        return 1;
 }
 int main(int argc, char const *argv[])
-{ 
-    //int fin = 1;
+{
+    int fin = 0, turn = 0, joueur = 0;
     board plateau;
     unitsArray nb_unite = malloc(sizeof(struct unitsArray_s));
-    initGame(plateau,nb_unite);
+    initGame(plateau, nb_unite);
     print_unitsArray(nb_unite);
     printBoard(plateau);
-    move(plateau,nb_unite,2,6,4);
-    printBoard(plateau);
-    print_unitsArray(nb_unite);
-    /*while(fin)
+    while (!fin)
     {
-        action(0,plateau,nb_unite);
-        action(1,plateau,nb_unite);
-    }*/
+        fin = action(joueur, plateau, nb_unite, turn);
+        if (fin == 0)
+        {
+            joueur++;
+            fin = action(joueur, plateau, nb_unite, turn);
+            turn++;
+            joueur--;
+        }
+    }
+    printf("Fin de la partie : Le joueur %d gagne.\n\n", who_wins(nb_unite));
     return 0;
 }
