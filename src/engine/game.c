@@ -227,7 +227,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
                 nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt_touch2);
             else 
                 nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt);
-            if (nb_unite->units[targetId].hp == 0)
+            if (nb_unite->units[targetId].hp <= 0)
             {
                 if (nb_unite->units[targetId].owner == 0)
                 {
@@ -249,17 +249,9 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
 void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, int y)
 {
     int x1 = nb_unite->units[uniteId].x, y1 = nb_unite->units[uniteId].y;
-    int i, end = 0;
     if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && plateau[x][y] == 0 && nb_unite->units[uniteId].owner == player && x>=0 && x< HEIGHT && y>=0 && y< WIDTH && uniteId >0 && uniteId <= MAX_UNITS)
     {
-        for (i = 0; i <= MAX_UNITS; i++)
-        {
-            if (nb_unite->units[i].x == x && nb_unite->units[i].y == y && end == 0)
-            {
-                end = 1;
-            }
-        }
-        if (end == 1)
+        if (plateau[x][y] != 0)
         {
             fprintf(stderr, "\nL'unité ne peut pas ce déplacer.\n");
             if (player == 0)
