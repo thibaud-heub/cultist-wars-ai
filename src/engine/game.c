@@ -3,7 +3,6 @@
 #include <math.h>
 #include <assert.h>
 #include <time.h>
-#include <string.h>
 #include "game.h"
 
 void initGame(board plateau, unitsArray nb_unite)
@@ -38,15 +37,15 @@ void initGame(board plateau, unitsArray nb_unite)
         nb_unite->units[i].hp = MAX_HP;
         if (i == MAX_UNITS - 1) // Initialisation leader 1
         {
-            nb_unite->units[i].owner = 0;
-            nb_unite->units[i].unit_type = 1;
+            nb_unite->units[i].owner = first;
+            nb_unite->units[i].unit_type = second;
             nb_unite->units[i].x = 3;
             nb_unite->units[i].y = 0;
             plateau[nb_unite->units[i].x][nb_unite->units[i].y] = 13;
         }
         else if (i == MAX_UNITS ) // Initialisation leader 2
         {
-            nb_unite->units[i].owner = 1;
+            nb_unite->units[i].owner = second;
             nb_unite->units[i].unit_type = 1;
             nb_unite->units[i].x = 3;
             nb_unite->units[i].y = 12;
@@ -54,7 +53,7 @@ void initGame(board plateau, unitsArray nb_unite)
         }
         else
         {
-            nb_unite->units[i].owner = 2;
+            nb_unite->units[i].owner = neutral;
             // nb_unite->units[i].unit_type=0;
             if (i >= MAX_UNITS / 2 )
             {
@@ -229,7 +228,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
                 nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt);
             if (nb_unite->units[targetId].hp <= 0)
             {
-                if (nb_unite->units[targetId].owner == 0)
+                if (nb_unite->units[targetId].owner == first)
                 {
                     nb_unite->numOfUnitsTeam0--;
                 }
@@ -240,7 +239,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
     }
     else
     {
-        if (nb_unite->units[uniteId].owner == 0)
+        if (nb_unite->units[uniteId].owner == first)
             nb_unite->numOfUnitsTeam0 = 0;
         else
             nb_unite->numOfUnitsTeam1 = 0;
@@ -254,7 +253,7 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
         if (plateau[x][y] != 0)
         {
             fprintf(stderr, "\nL'unité ne peut pas ce déplacer.\n");
-            if (player == 0)
+            if (player == first)
                 nb_unite->numOfUnitsTeam0 = 0;
             else
                 nb_unite->numOfUnitsTeam1 = 0;
@@ -281,7 +280,7 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
     else
     {
         fprintf(stderr, "\nL'unité ne peut pas ce déplacer.\n");
-        if (player == 0)
+        if (player == first)
             nb_unite->numOfUnitsTeam0 = 0;
         else
             nb_unite->numOfUnitsTeam1 = 0;
@@ -292,7 +291,7 @@ void convert(board plateau, unitsArray nb_unite, int player, int targetId)
 
     int x,y;
     int x1 = nb_unite->units[targetId].x, y1 = nb_unite->units[targetId].y;
-    if(player == 0)
+    if(player == first)
     {
         x = nb_unite->units[12].x;
         y = nb_unite->units[12].y;
@@ -304,15 +303,15 @@ void convert(board plateau, unitsArray nb_unite, int player, int targetId)
     }
     if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 12 && targetId != 13)
     {
-        if (player == 0)
+        if (player == first)
         {
-            nb_unite->units[targetId].owner = 0;
+            nb_unite->units[targetId].owner = first;
             //plateau[x1][y1] = 'A';
             nb_unite->numOfUnitsTeam0++;
         }
         else
         {
-            nb_unite->units[targetId].owner = 1;
+            nb_unite->units[targetId].owner = second;
             //plateau[x1][y1] = 'B';
             nb_unite->numOfUnitsTeam1++;
         }
@@ -320,29 +319,14 @@ void convert(board plateau, unitsArray nb_unite, int player, int targetId)
     else
     {
         printf("\n////////////Le leader ne peut pas convertir.////////////\n");
-        if (player == 0)
+        if (player == first)
             nb_unite->numOfUnitsTeam0 = 0;
         else
             nb_unite->numOfUnitsTeam1 = 0;
     }
 }
 
-/*void bresenham_me(board plateau, int x0, int y0, int x1, int y1)
-{
-    int x = x0, y = y0;
-    while (x != x1 && y != y1)
-    {
-        if (((y1 - y0) * x - (x1 - x0) * y + x1 * y0 - x0 * y1) == 0)
-        {
-            plateau[x][y][0] = 'T';
-            x++;
-        }
-        else
-            y++;
-        printf("%d,%d\n", x, y);
-    }
-    plateau[x1][y1][0] = 'T';
-}*/
+
 /*int main(){
     board plateau;
     unitsArray nb_unite = malloc(sizeof(struct unitsArray_s));
