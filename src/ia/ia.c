@@ -76,7 +76,7 @@ ia_result alpha_beta(Item node,int depth,enum playerId whoplay,enum playerId iaP
 int evaluate_board(unitsArray Lunit,enum playerId whoplay){
     int score=0,i;
     unit studyUnit;
-    for(i=0;i<MAX_UNITS;i++){
+    for(i=1;i<=MAX_UNITS;i++){
         studyUnit=Lunit->units[i];
         if (studyUnit.owner==whoplay){
             if (studyUnit.unit_type==cultLeader) score+=(20*(studyUnit.hp));
@@ -130,7 +130,7 @@ void moveNode(Item node){
     else if (node->mvt->deplacement==east) y+=1;
     else y-=1;
     
-    move(node->plateau,node->Lunit,node->mvt->studied_unit,x,y);
+    move(node->plateau,node->Lunit->units[node->mvt->studied_unit].owner,node->Lunit,node->mvt->studied_unit,x,y);
 }
 
 void freeIaResult(ia_result _iaresult){

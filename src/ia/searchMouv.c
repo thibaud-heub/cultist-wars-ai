@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include<stdio.h>
 #include "searchMouv.h"
 #include "../engine/game_types.h"
 #include "../tad/linklst.h"
@@ -10,18 +11,7 @@
     int y1 = tab_unite->units[uniteID].y;
     result Dep;
 
-    if((y1+1)<HEIGHT && plateau[x1][y1+1]=='0')
-    {
-        Dep=malloc(sizeof(struct data_mouv));
-
-        Dep->studied_unit=uniteID;
-        Dep->type_mouve=depl;
-        Dep->deplacement=north;
-        Dep->targetId=-1;
-
-        add(Dep,moving);
-    }
-    if((y1-1)>=0 && plateau[x1][y1-1]=='0')
+    if((x1+1)<HEIGHT && plateau[x1+1][y1]==0)
     {
         Dep=malloc(sizeof(struct data_mouv));
 
@@ -30,9 +20,20 @@
         Dep->deplacement=south;
         Dep->targetId=-1;
 
-        add(Dep,moving);
+        moving=add(Dep,moving);
     }
-    if((x1+1)<WIDTH && plateau[x1+1][y1]=='0')
+    if((x1-1)>=0 && plateau[x1-1][y1]==0)
+    {
+        Dep=malloc(sizeof(struct data_mouv));
+
+        Dep->studied_unit=uniteID;
+        Dep->type_mouve=depl;
+        Dep->deplacement=north;
+        Dep->targetId=-1;
+
+        moving=add(Dep,moving);
+    }
+    if((y1+1)<WIDTH && plateau[x1][y1+1]==0)
     {
         Dep=malloc(sizeof(struct data_mouv));
 
@@ -41,9 +42,9 @@
         Dep->deplacement=east;
         Dep->targetId=-1;
 
-        add(Dep,moving);
+        moving=add(Dep,moving);
     }
-    if((x1-1)>=0 && plateau[x1-1][y1]=='0')
+    if((y1-1)>=0 && plateau[x1][y1-1]==0)
     {
         Dep=malloc(sizeof(struct data_mouv));
 
@@ -52,95 +53,107 @@
         Dep->deplacement=west;
         Dep->targetId=-1;
 
-        add(Dep,moving);
+        moving=add(Dep,moving);
     }
 
     return moving;
 }
 
- List tir_all(board plateau, unitsArray tab_unite, int uniteID)
+List tir_all(board plateau, unitsArray tab_unite, int uniteID)
 {
     List shoot=createEmptyList();
     result shooting;
 
-    int dx,dy,i,xinc,yinc,cumul,x,y,compt=0,touche=0;
+    int dx,dy,i,xinc,yinc,cumul,x,y,compt,touche;
     int xi = tab_unite->units[uniteID].x;
     int yi = tab_unite->units[uniteID].y;
-    int j,k;
-    char tmp1,tmp2;
+    int xtmp, ytmp;
+    int j;
+    int target;
 
-    x = xi;
-    y = yi;
-
-    if(tab_unite->units[uniteID].owner==first) tmp1='A',tmp2='1';
-    else tmp1='B',tmp2='2';
-
-    for(j=0;j<HEIGHT;j++)
+    for(j=1;j<=MAX_UNITS;j++)
     {
-        for(k=0;k<WIDTH;k++)
+        if(tab_unite->units[j].owner!=tab_unite->units[uniteID].owner)
         {
-            if(plateau[j][k]!=tmp1 && plateau[j][k]!=tmp2)
+            touche=0;
+            compt=0;
+            x = xi;
+            y = yi;
+            xtmp=tab_unite->units[j].x;
+            ytmp=tab_unite->units[j].y;
+            dx = xtmp - xi ;
+            dy = ytmp - yi ;
+            xinc = ( dx > 0 ) ? 1 : -1 ;
+            yinc = ( dy > 0 ) ? 1 : -1 ;
+            dx = abs(dx) ;
+            dy = abs(dy) ;
+            target=j;
+            if ( dx > dy ) 
             {
-                dx = k - xi ;
-                dy = j - yi ;
-                xinc = ( dx > 0 ) ? 1 : -1 ;
-                yinc = ( dy > 0 ) ? 1 : -1 ;
-                dx = abs(dx) ;
-                dy = abs(dy) ;
-                if ( dx > dy ) 
+                cumul = dx / 2 ;
+                for (i=1;i<=dx;i++) 
                 {
-                    cumul = dx / 2 ;
-                    for (i=1;i<=dx;i++) 
+                    x += xinc ;
+                    cumul += dy ;
+                    if (cumul>=dx) 
                     {
-                        x += xinc ;
-                        cumul += dy ;
-                        if (cumul>=dx) 
-                        {
-                            cumul -= dx ;
-                            y += yinc ; 
-                        }
-                        if(plateau[x][y]=='X')
-                        {
-                            touche = 1;
-                        }
-                        compt++;
-                    } 
-                }
-                else {
-                    cumul = dy / 2 ;
-                    for (i=1;i<=dy;i++) 
+                        cumul -= dx ;
+                        y += yinc ; 
+                    }
+                    if(plateau[x][y]==-1 && touche==0)
                     {
-                        y += yinc ;
-                        cumul += dx ;
-                        if (cumul>=dy) 
-                        {
-                            cumul -= dy ;
-                            x += xinc ; 
-                        }
-                        if(plateau[x][y]=='X')
-                        {
-                            touche = 1;
-                        }
-                        compt++;
-                    } 
-                }
-                if(touche == 0 && compt<=7)
+                        touche = 1;
+                    }
+                    else if(plateau[x][y]>=1 && plateau[x][y]<=MAX_UNITS && touche==0)
+                    {
+                        target=plateau[x][y];
+                        if(target==j && tab_unite->units[target].owner!=tab_unite->units[uniteID].owner) touche=2;
+                        else touche = 3;
+                    }
+                    compt++;
+                } 
+            }
+            else {
+                cumul = dy / 2 ;
+                for (i=1;i<=dy;i++) 
                 {
-                    shooting=malloc(sizeof(struct data_mouv));
+                    y += yinc ;
+                    cumul += dx ;
+                    if (cumul>=dy)
+                    {
+                        cumul -= dy ;
+                        x += xinc ; 
+                    }
+                    if(plateau[x][y]==-1 && touche==0)
+                    {
+                        touche = 1;
+                    }
+                    else if(plateau[x][y]>=1 && plateau[x][y]<=MAX_UNITS && touche==0)
+                    {
+                        target=plateau[x][y];
+                        if(target==j && tab_unite->units[target].owner!=tab_unite->units[uniteID].owner) touche=2;
+                        else touche = 3;
+                    }
+                    compt++;
+                } 
+            }
+            if((touche==0 || touche==2) && compt<=MAX_DAMAGE)
+            {
+                shooting=malloc(sizeof(struct data_mouv));
 
-                    shooting->studied_unit=uniteID;
-                    shooting->type_mouve=tir;
-                    shooting->deplacement=-1;
-                    shooting->targetId= 2; /////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                shooting->studied_unit=uniteID;
+                shooting->type_mouve=tir;
+                shooting->deplacement=-1;
+                shooting->targetId=target;
 
-                    add(shooting,shoot);
-                }
+                shoot=add(shooting,shoot);
             }
         }
     }
 
     return shoot;
 }
+
 
  List conversion(board plateau, unitsArray tab_unite, int uniteID)
 {
@@ -149,54 +162,50 @@
     int x1 = tab_unite->units[uniteID].x;
     int y1 = tab_unite->units[uniteID].y;
     result Co;
-    char test;
 
-    if (tab_unite->units[uniteID].owner==first) test='B';
-    else test='A';
-
-    if((y1+1)<HEIGHT && ((test==plateau[x1][y1+1]) || plateau[x1][y1+1]=='u'))
+    if((x1+1)<HEIGHT && plateau[x1+1][y1]>0 && (tab_unite->units[plateau[x1+1][y1]].owner!=tab_unite->units[uniteID].owner))
     {   
         Co=malloc(sizeof(struct data_mouv));
 
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= 4;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Co->targetId=plateau[x1+1][y1];
 
-        add(Co,convert);
+        convert=add(Co,convert);
     }
-    if((y1-1)>=0 && ((test==plateau[x1][y1-1]) || plateau[x1][y1-1]=='u'))
+    if((x1-1)>=0 && plateau[x1-1][y1]>0 && (tab_unite->units[plateau[x1-1][y1]].owner!=tab_unite->units[uniteID].owner))
     {   
         Co=malloc(sizeof(struct data_mouv));
 
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= 5;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Co->targetId=plateau[x1-1][y1];
 
-        add(Co,convert);
+        convert=add(Co,convert);
     }
-    if((x1+1)<WIDTH && ((test==plateau[x1+1][y1]) || plateau[x1+1][y1]=='u'))
+    if((y1+1)<WIDTH && plateau[x1][y1+1]>0 && (tab_unite->units[plateau[x1][y1+1]].owner!=tab_unite->units[uniteID].owner))
     {   
         Co=malloc(sizeof(struct data_mouv));
 
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= 6;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Co->targetId=plateau[x1][y1+1];
 
-        add(Co,convert);
+        convert=add(Co,convert);
     }
-    if((x1-1)>=0 && ((test==plateau[x1-1][y1]) || plateau[x1-1][y1]=='u'))
-    {   
+    if((y1-1)>=0 && plateau[x1][y1-1]>0 && (tab_unite->units[plateau[x1][y1-1]].owner!=tab_unite->units[uniteID].owner))
+    {
         Co=malloc(sizeof(struct data_mouv));
 
         Co->studied_unit=uniteID;
         Co->type_mouve=conv;
         Co->deplacement=-1;
-        Co->targetId= 7;/////////////////////////////////// A CHANGER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Co->targetId=plateau[x1][y1-1];
 
-        add(Co,convert);
+        convert=add(Co,convert);
     }
 
     return convert;
@@ -228,7 +237,7 @@ List all_mvt(board plateau, unitsArray tab_unite, enum playerId whoplay)
     List tmp=createEmptyList();
     int i;
 
-    for(i=0;i<MAX_UNITS;i=i+1)
+    for(i=1;i<=MAX_UNITS;i=i+1)
     {
         if(tab_unite->units[i].owner==whoplay)
         {
