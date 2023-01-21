@@ -153,7 +153,7 @@ void print_unitsArray(unitsArray nb_unite)
 }
 void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
 {
-    int dx, dy, i, xinc, yinc, cumul, x, y, compt = 0, touche = 0,compt_touch2 = 0; // touche : 0 rien n'a été touché, 1 un obstacle a été touché, 2 un ennemis a été touché
+    int dx, dy, i, xinc, yinc, cumul, x, y, compt = 0, touche = 0,compt_touch2 = 0; // touche : 0 rien n'a été touché entre la source et la cible, 1 un obstacle a été touché, 2 un ennemis a été touché
     int xi = nb_unite->units[uniteId].x;
     int yi = nb_unite->units[uniteId].y;
     int xf = nb_unite->units[targetId].x;
@@ -172,7 +172,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
         if (dx > dy)
         {
             cumul = dx / 2;
-            for (i = 1; i <= dx; i++)
+            for (i = 1; i <= dx && touche == 0; i++)
             {
                 x += xinc;
                 cumul += dy;
@@ -197,7 +197,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
         else
         {
             cumul = dy / 2;
-            for (i = 1; i <= dy; i++)
+            for (i = 1; i <= dy && touche == 0; i++)
             {
                 y += yinc;
                 cumul += dx;
@@ -228,6 +228,7 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
                 nb_unite->units[targetId].hp = nb_unite->units[targetId].hp - (8 - compt);
             if (nb_unite->units[targetId].hp <= 0)
             {
+                plateau[nb_unite->units[targetId].x][nb_unite->units[targetId].y] = 0;
                 if (nb_unite->units[targetId].owner == first)
                 {
                     nb_unite->numOfUnitsTeam0--;
@@ -293,15 +294,15 @@ void convert(board plateau, unitsArray nb_unite, int player, int targetId)
     int x1 = nb_unite->units[targetId].x, y1 = nb_unite->units[targetId].y;
     if(player == first)
     {
-        x = nb_unite->units[12].x;
-        y = nb_unite->units[12].y;
-    }
-    else
-    {
         x = nb_unite->units[13].x;
         y = nb_unite->units[13].y;
     }
-    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 12 && targetId != 13)
+    else
+    {
+        x = nb_unite->units[14].x;
+        y = nb_unite->units[14].y;
+    }
+    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 13 && targetId != 14)
     {
         if (player == first)
         {
