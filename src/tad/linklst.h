@@ -68,7 +68,7 @@ Bool isEmptyList (List _list);
 
 List copyList (List _list);
 void freeLink (Maillon* _link);
-void freeList (List _list);
+void freeList (List* _list);
 void freeResult(result _result);
 
 //----- Toolbox

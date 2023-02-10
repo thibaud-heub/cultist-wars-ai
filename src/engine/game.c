@@ -147,7 +147,7 @@ void print_unitsArray(unitsArray nb_unite)
     printf("\n");
     printf("Nombre unités Team 0 : %d\n",nb_unite->numOfUnitsTeam0);
     printf("Nombre unités Team 1 : %d\n\n",nb_unite->numOfUnitsTeam1);
-    for (int i = 1; i <= MAX_UNITS; i++)
+    for (int i = 0; i <= MAX_UNITS; i++)
     {
         printf("Unité n°%d, Team: %d, hp:%d, x=%d, y=%d\n", nb_unite->units[i].unitId, nb_unite->units[i].owner, nb_unite->units[i].hp, nb_unite->units[i].x, nb_unite->units[i].y);
     }
@@ -252,7 +252,7 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
     int i, end = 0;
     if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && plateau[x][y] == 0 && nb_unite->units[uniteId].owner == player && x>=0 && x< HEIGHT && y>=0 && y< WIDTH && uniteId >0 && uniteId <= MAX_UNITS)
     {
-        for (i = 0; i <= MAX_UNITS; i++)
+        for (i = 1; i <= MAX_UNITS; i++)
         {
             if (nb_unite->units[i].x == x && nb_unite->units[i].y == y && end == 0)
             {
@@ -266,6 +266,7 @@ void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, in
                 nb_unite->numOfUnitsTeam0 = 0;
             else
                 nb_unite->numOfUnitsTeam1 = 0;
+            printBoard(plateau);
         }
         else
         {
@@ -302,15 +303,15 @@ void convert(board plateau, unitsArray nb_unite, int player, int targetId)
     int x1 = nb_unite->units[targetId].x, y1 = nb_unite->units[targetId].y;
     if(player == 0)
     {
-        x = nb_unite->units[12].x;
-        y = nb_unite->units[12].y;
-    }
-    else
-    {
         x = nb_unite->units[13].x;
         y = nb_unite->units[13].y;
     }
-    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 12 && targetId != 13)
+    else
+    {
+        x = nb_unite->units[14].x;
+        y = nb_unite->units[14].y;
+    }
+    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && nb_unite->units[targetId].owner != player && targetId != 13 && targetId != 14)
     {
         if (player == 0)
         {

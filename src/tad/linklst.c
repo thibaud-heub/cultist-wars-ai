@@ -116,13 +116,17 @@ void freeLink (Maillon* _link) {
  * 
  * @param _list The list to destroy
  */
-void freeList (List _list) {
-    if (!isEmptyList(_list)) {
+void freeList (List* _list) {
+    List tmp;
+    if (!isEmptyList(*_list)) {
         // Free the end of the list
-        freeList(tail(_list));
+        tmp=tail(*_list);
+        freeList(&tmp);
         // Free the head (only remaining element)
-        freeResult(head(_list));
-        freeLink(_list.first);
+        freeResult(head(*_list));
+        freeLink(_list->first);
+        _list->first=NULL;
+        _list->last=NULL;
     }
 }
 
@@ -158,8 +162,6 @@ List copyList(List _list) {
  */
 void printList (List _list) {
     Maillon * current_link = _list.first;
-    printf("%p\n",_list.first);
-    printf("%p\n",_list.last);
     while (current_link!=NULL) {
         //printf("%d\n",current_link->element);
         printResult(current_link->element);
