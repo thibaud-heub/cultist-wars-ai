@@ -249,34 +249,23 @@ void shoot(board plateau, unitsArray nb_unite, int uniteId, int targetId)
 void move(board plateau, int player, unitsArray nb_unite, int uniteId, int x, int y)
 {
     int x1 = nb_unite->units[uniteId].x, y1 = nb_unite->units[uniteId].y;
-    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && plateau[x][y] == 0 && nb_unite->units[uniteId].owner == player && x>=0 && x< HEIGHT && y>=0 && y< WIDTH && uniteId >0 && uniteId <= MAX_UNITS)
+    if (abs(x1 - x) <= 1 && abs(y1 - y) <= 1 && !(abs(x1 - x) == abs(y1 - y)) && plateau[x][y] == 0 && nb_unite->units[uniteId].owner == player && x>=0 && x< HEIGHT && y>=0 && y< WIDTH && uniteId >0 && uniteId <= MAX_UNITS && plateau[x][y] == 0)
     {
-        if (plateau[x][y] != 0)
+        plateau[x1][y1] = 0;
+        if (uniteId == 13)
         {
-            fprintf(stderr, "\nL'unité ne peut pas ce déplacer.\n");
-            if (player == first)
-                nb_unite->numOfUnitsTeam0 = 0;
-            else
-                nb_unite->numOfUnitsTeam1 = 0;
+            plateau[x][y] = 13;
+        }
+        else if (uniteId == 14)
+        {
+            plateau[x][y] = 14;
         }
         else
         {
-            plateau[x1][y1] = 0;
-            if (uniteId == 13)
-            {
-                plateau[x][y] = 13;
-            }
-            else if (uniteId == 14)
-            {
-                plateau[x][y] = 14;
-            }
-            else
-            {
-                plateau[x][y] = uniteId;
-            }
-            nb_unite->units[uniteId].x = x;
-            nb_unite->units[uniteId].y = y;
+            plateau[x][y] = uniteId;
         }
+        nb_unite->units[uniteId].x = x;
+        nb_unite->units[uniteId].y = y;
     }
     else
     {
