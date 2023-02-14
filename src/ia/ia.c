@@ -1,6 +1,17 @@
 #include "ia.h"
 #include <stdio.h>
 
+
+void make_move_IA(board plateau,unitsArray Lunit,enum playerId iaPlayer){
+    Item node=init_Item(plateau,Lunit);
+    ia_result move=alpha_beta(node,0,iaPlayer,iaPlayer,INFINITED,INFINITEP);
+    freeNode(node);
+    if (move->mvt->type_mouve==depl) moveNodeFinish(plateau,Lunit,move->mvt);
+    else if (move->mvt->type_mouve==tir) shoot(plateau,Lunit,move->mvt->studied_unit,move->mvt->targetId);
+    else if (move->mvt->type_mouve==conv) convert(plateau,Lunit,Lunit->units[move->mvt->studied_unit].owner,move->mvt->targetId);
+    freeIaResult(move);
+}
+
 Item init_Item(board plateau,unitsArray Lunit){
     Item init=malloc(sizeof(struct Item_z));
     copyBoard(plateau,init->plateau);
@@ -97,25 +108,8 @@ int evaluate_board(unitsArray Lunit,enum playerId whoplay){
     return score;
 }
 
-void copyBoard(board initial,board copy){
-    int i,j;
-    for (i=0;i<HEIGHT;i++){
-        for(j=0;j<WIDTH;j++){
-            copy[i][j]=initial[i][j];
-        }
-    }
-}
 
-unitsArray copyUnistArray(unitsArray initial){
-    unitsArray copy=malloc(sizeof(struct unitsArray_s));
-    int i;
-    copy->numOfUnitsTeam0=initial->numOfUnitsTeam0;
-    copy->numOfUnitsTeam1=initial->numOfUnitsTeam1;
-    for (i=1;i<=MAX_UNITS;i++){
-        copy->units[i]=initial->units[i];
-    }
-    return copy;
-}
+//--- Make child node
 
 Item getChildNode(Item initial,result mvt){
     Item copy=malloc(sizeof(struct Item_z));
@@ -135,6 +129,37 @@ void moveNode(Item node){
     else if (node->mvt->deplacement==east) y+=1;
     else y-=1;
     move(node->plateau,node->Lunit->units[node->mvt->studied_unit].owner,node->Lunit,node->mvt->studied_unit,x,y);
+}
+
+void moveNodeFinish(board plateau,unitsArray Lunit,result mvt){
+    int x=Lunit->units[mvt->studied_unit].x,y=Lunit->units[mvt->studied_unit].y;
+    if (mvt->deplacement==north) x-=1;
+    else if (mvt->deplacement==south) x+=1;
+    else if (mvt->deplacement==east) y+=1;
+    else y-=1;
+    move(plateau,Lunit->units[mvt->studied_unit].owner,Lunit,mvt->studied_unit,x,y);
+}
+
+//---- Data Management
+
+void copyBoard(board initial,board copy){
+    int i,j;
+    for (i=0;i<HEIGHT;i++){
+        for(j=0;j<WIDTH;j++){
+            copy[i][j]=initial[i][j];
+        }
+    }
+}
+
+unitsArray copyUnistArray(unitsArray initial){
+    unitsArray copy=malloc(sizeof(struct unitsArray_s));
+    int i;
+    copy->numOfUnitsTeam0=initial->numOfUnitsTeam0;
+    copy->numOfUnitsTeam1=initial->numOfUnitsTeam1;
+    for (i=1;i<=MAX_UNITS;i++){
+        copy->units[i]=initial->units[i];
+    }
+    return copy;
 }
 
 void freeIaResult(ia_result _iaresult){

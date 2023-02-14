@@ -32,13 +32,19 @@ ia_result alpha_beta(Item node,int depth,enum playerId whoplay,enum playerId iaP
 
 int evaluate_board(unitsArray Lunit,enum playerId whoplay);
 
-void copyBoard(board initial,board copy);
-
-unitsArray copyUnistArray(unitsArray initial);
+//--- Make child node
 
 Item getChildNode(Item initial,result mvt);
 
 void moveNode(Item node);
+
+void moveNodeFinish(board plateau,unitsArray Lunit,result mvt);
+
+//---- Data Management
+
+unitsArray copyUnistArray(unitsArray initial);
+
+void copyBoard(board initial,board copy);
 
 void freeIaResult(ia_result _iaresult);
 
